@@ -1,0 +1,23 @@
+1. solana-ledger-tool --ledger /root/solana/ledger/ create-snapshot 95038710 /root/solana/ledger/ --hard-fork 95038710
+2. cp /root/solana/solana.service /root/solana/solana.service.backup
+3. nano /root/solana/solana.service
+Там удалить строчки с —trusted-validator
+И вместо них добавить следующее:
+--wait-for-supermajority 95038710 \
+--no-snapshot-fetch \
+--no-genesis-fetch \
+--expected-bank-hash E3MJucWkWkugqJ8ewHAkDWuCN6uDxEychwjFFCwJ16ic \
+--expected-shred-version 50850 \
+--known-validator 3K8BYGTPD9AxqYQDPdU8PPy6AfiSwf4hDmFy1xXGB8Ns \
+--known-validator 5dB4Ygb8Sf3Sssdxxrpbb4NFX9bMrYnieiz11Vr5xJkJ \
+--known-validator 7TcmJn12spW6KQJp4fvvo45d1hpxS8EnLjKMxihtNZ1V \
+--known-validator 4jhyvbBHbsRDF6och7pDQ7ahYTUr7wNkAYJTLLuMUtku \
+--known-validator 4rVaXrd7BLSFZMSm4Lq63nxkVyezGxsQVpUhc9LqbxVk \
+--known-validator 82k4RGZAJxtXvW3hzgmHB2q4oDHzgwMR2cGXup324gsJ \
+4. systemctl daemon-reload
+5. systemctl restart solana
+6. solana --url http://127.0.0.1:8899 slot
+должен выдать 95038710 через пару минут
+7. tail -f /root/solana/solana.log | grep "Waiting for"
+должно изредка появляться что "Ждём 80% стейка". Значит всё ок.
+tail -f ~/solana/solana.log | grep "% of active stake visible in gossip"
